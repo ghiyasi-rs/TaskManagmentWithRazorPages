@@ -1,0 +1,292 @@
+﻿@page
+@model TaskManagmentWithRazorPages.Pages.Duties.DetailModel
+@{
+}
+
+<div id="modal-placeholder"></div>
+
+
+<h2> @Model._duty.Title</h2>
+<h4>@Model._duty.Description</h4>
+
+<input hidden id="dutyId" value="@Model._duty.Id"/>
+
+<div class="container mt-5">
+    <div class="d-flex justify-content-center pt-3 pb-2">
+
+        <button class="btn btn-success form-control addtxt" type="button" data-toggle="addComment-modal" data-url=@Url.Page("Detail", "AddCommentPartial",new {dutyId=Model._duty.Id})><i class="fa fa-filter"><span class="fontbtn px-2">+ Add a comment</span></i></button>
+    </div>
+    <div class="row d-flex justify-content-center ">
+
+        <div class="col-md-12">
+
+            <div class="card">
+
+                <div class="input-box">
+                    <input id="searchBox" type="text" class="form-control" placeholder="search">
+                    <i class="fa fa-search"></i>
+
+                    <div class="col-md-12">
+
+                        <div id="searchResultDiv">
+                            <ul id="list">
+                            </ul>
+                        </div>
+                    </div>
+
+
+                    <div id="content">
+                        @if (Model._comments.Any())
+                        {
+                            @foreach (var comment in Model._comments)
+                            {
+                                <div class="list">
+
+                                    <i class="fa fa-fire"></i>
+                                    <div class="d-flex justify-content-center py-2">
+                                        <div class="second py-2 px-2">
+
+                                            <div class="d-flex justify-content-between py-1 pt-2">
+                                                <div><span class="text2">UserName</span></div>
+                                                <div><span class="text3">@comment.AddedDate</span><span class="thumbup"><i class="fa fa-thumbs-o-up"></i></span></div>
+                                            </div>
+
+                                            <div>
+                                                <span class="text1">@comment.CommentText </span>
+                                            </div>
+
+
+                                            <div class="d-flex justify-content-center pt-3 pb-2">
+                                                <button class="btn btn-info" type="button" data-toggle="addComment-modal" data-url=@Url.Page("Detail", "UpdateCommentPartial",new {Id=comment.Id})>Edit</button>
+                                                <a href=@Url.Page("Detail", "DeleteComment",new {Id=comment.Id,dutyId=comment.DutyId}) class="btn btn-secondary active">Delete</a>
+                                            </div>
+
+                                        </div>
+                                    </div>
+                                </div>
+
+
+
+                            }
+
+                        }
+
+
+
+                    </div>
+
+
+
+
+
+
+                </div>
+
+            </div>
+
+        </div>
+
+    </div>
+</div>
+    <script src="~/lib/bootstrap/dist/js/bootstrap.bundle.min.js"></script>
+    <script src="~/lib/jquery/dist/jquery.js"></script>
+    <script>
+        $(function() {
+
+            var placeholderElement = $('#modal-placeholder');
+            $('button[data-toggle="addComment-modal"]').click(function(event) {
+                var url = $(this).data('url');
+                $.get(url).done(function(data) {
+                    placeholderElement.html(data);
+                    placeholderElement.find('.modal').modal('show');
+                });
+            });
+
+        });
+                                                           
+
+
+    </script>
+
+    <script>
+        $(document).ready(function() {
+            $("#searchBox").on("keyup", function() {
+
+                var value = $(this).val().toLowerCase();
+                var dutyId = $("#dutyId").val();
+                if (value != '')
+                {
+                    document.getElementById("list").innerHTML = "";
+                  
+                    //var commentId = $("").val();
+                    //document.getElementById("content").style.display = "inline";
+                    var url = "../Duties/Detail?handler=Search&searchText=" + value+"&dutyId="+dutyId;
+                    document.getElementById("list").innerHTML = "";
+                    var ul = document.getElementById("list");
+                    $.get(url).done(function(data) {
+                        for (var d in data) {
+
+                            if (data.hasOwnProperty(d)) {
+                                
+                                url = "../Duties/Comment?handler=Get&commentId="+ d;
+                                 $("#list").append('<li ><a href='+url+'>' + data[d] + '</a></li>')
+
+                            }
+                            else {
+
+                                document.getElementById("list").innerHTML = "";
+                                document.getElementById("content").style.display = "none";
+                            }
+
+                        }
+
+                    });
+                }
+
+                else 
+                {
+                   
+                    document.getElementById("list").innerHTML = "";
+                    document.getElementById("content").style.display = "inline";
+                }
+
+
+            });
+        });
+    </script>
+
+    <script>
+        function onSelect(e) {
+            var dataItem = this.dataItem(e.item);
+            alert(dataItem);
+        }
+    </script>
+
+    <style>
+        /*    body{
+                                                                                                        background-color: #fff;
+                                                                                                    }*/
+        .container {
+            /*background-color: #eef2f5;*/
+            width: 400px;
+        }
+
+        .addtxt {
+            padding-top: 10px;
+            padding-bottom: 10px;
+            text-align: center;
+            font-size: 13px;
+            width: 350px;
+            background-color: #eeeeee69;
+            font-weight: 500;
+        }
+
+        /*  .form-control: focus {
+                                                                                    color: #000;
+                                                                                }*/
+
+        .second {
+            width: 350px;
+            background-color: white;
+            border-radius: 4px;
+            box-shadow: 10px 10px 5px #aaaaaa;
+        }
+
+        .text1 {
+            font-size: 13px;
+            font-weight: 500;
+            color: #56575b;
+        }
+
+        .text2 {
+            font-size: 13px;
+            font-weight: 500;
+            margin-left: 6px;
+            color: #56575b;
+        }
+
+        .text3 {
+            font-size: 13px;
+            font-weight: 500;
+            margin-right: 4px;
+            color: #828386;
+        }
+
+        .text3o {
+            color: #00a5f4;
+        }
+
+        .text4 {
+            font-size: 13px;
+            font-weight: 500;
+            color: #828386;
+        }
+
+        .text4i {
+            color: #00a5f4;
+        }
+
+        .text4o {
+            color: white;
+        }
+
+        .thumbup {
+            font-size: 13px;
+            font-weight: 500;
+            margin-right: 5px;
+        }
+
+        .thumbupo {
+            color: #17a2b8;
+        }
+
+
+        .card {
+            background-color: #fff;
+            padding: 15px;
+            border: none;
+        }
+
+        .input-box {
+            position: relative;
+        }
+
+            .input-box i {
+                position: absolute;
+                right: 13px;
+                top: 15px;
+                color: #ced4da;
+            }
+
+        .form-control {
+            height: 50px;
+            background-color: #eeeeee69;
+        }
+
+            .form-control:focus {
+                background-color: #eeeeee69;
+                box-shadow: none;
+                border-color: #eee;
+            }
+
+
+        .list {
+            padding-top: 20px;
+            padding-bottom: 10px;
+            display: flex;
+            align-items: center;
+        }
+
+        .border-bottom {
+            border-bottom: 2px solid #eee;
+        }
+
+        .list i {
+            font-size: 19px;
+            color: red;
+        }
+
+        .list small {
+            color: #dedddd;
+        }
+    </style>

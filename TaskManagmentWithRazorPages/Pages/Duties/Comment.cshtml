@@ -1,0 +1,74 @@
+﻿@page
+@model TaskManagmentWithRazorPages.Pages.Duties.CommentModel
+@{
+}
+<div id="modal-placeholder"></div>
+<div class="container mt-5">
+
+    <div class="row d-flex justify-content-center ">
+
+        <div class="col-md-6">
+
+            <div class="card">
+
+                <div class="input-box">
+
+
+
+                    <div id="content">
+
+                        <div class="list">
+
+                            <i class="fa fa-fire"></i>
+                            <div class="d-flex justify-content-center py-2">
+                                <div class="second py-2 px-2">
+
+                                    <div class="d-flex justify-content-between py-1 pt-2">
+                                        <div><span class="text2">UserName</span></div>
+                                        <div><span class="text3">@Model._comment.AddedDate</span><span class="thumbup"><i class="fa fa-thumbs-o-up"></i></span></div>
+                                    </div>
+
+                                    <div>
+                                        <span class="text1">@Model._comment.CommentText </span>
+                                    </div>
+
+
+                                    <div class="d-flex justify-content-center pt-3 pb-2">
+                                        <button class="btn btn-info" type="button" data-toggle="addComment-modal" data-url=@Url.Page("Detail", "UpdateCommentPartial",new {Id=@Model._comment.Id})>Edit</button>
+                                        <a href=@Url.Page("Detail", "DeleteComment",new {Id=@Model._comment.Id,dutyId=@Model._comment.DutyId}) class="btn btn-secondary active">Delete</a>
+                                    </div>
+
+                                </div>
+                            </div>
+                        </div>
+
+                    </div>
+
+                </div>
+
+            </div>
+
+        </div>
+
+    </div>
+</div>
+    <script src="~/lib/bootstrap/dist/js/bootstrap.bundle.min.js"></script>
+    <script src="~/lib/jquery/dist/jquery.js"></script>
+<script>
+
+    $(function() {
+
+        var placeholderElement = $('#modal-placeholder');
+        $('button[data-toggle="addComment-modal"]').click(function(event) {
+            var url = $(this).data('url');
+            $.get(url).done(function(data) {
+                placeholderElement.html(data);
+                placeholderElement.find('.modal').modal('show');
+            });
+        });
+
+    });
+
+
+
+</script>
